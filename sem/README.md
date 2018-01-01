@@ -177,7 +177,7 @@ the algorithm one can use Gelman-Rubin's R hat statistics, which is required
 to be bellow 1.1. For example, using the built-in example from the MATLAB
 prompt:
 
-```>> results = tapas_sem_example_inversion(1, 'invgamma');```
+```\>\> results = tapas_sem_example_inversion(1, 'invgamma');```
 
 This estimates the model using the PROSA model (first value) and assumes
 that the hit time of the units is destributed according to the inverse Gamma
