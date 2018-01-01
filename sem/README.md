@@ -209,7 +209,8 @@ In this case most of the parameters have not converge. Note that parameters
 be equal across trial types (see below).
 
 To obtain the mean value of the parameters one can run
-```>> mean(results.ps_theta')
+```
+>> mean(results.ps_theta')
 
 ans =
 
@@ -235,7 +236,8 @@ To transform the parameters to their native space (the positive interval)
 the respective function 
 is `tapas_sem_[model]_[parametric dist]_ptrans.m`. For example,
 
-```>> tapas_sem_prosa_invgamma_ptrans(results.map)'
+```
+>> tapas_sem_prosa_invgamma_ptrans(results.map)'
 
 ans =
 
@@ -339,8 +341,10 @@ antisaccade trials.
 In order to generate nested model a projection matrix is used. This is 
 defined as the attribute `jm` of a model. For example
 
-```ptheta = tapas_sem_prosa_invgamma_ptheta();
-ptheta.jm = [eye(15); zeros(3, 12) eye(3)];```
+```
+ptheta = tapas_sem_prosa_invgamma_ptheta();
+ptheta.jm = [eye(15); zeros(3, 12) eye(3)];
+```
 
 In this case the nested model is defined by setting up the constrain matrix
 `jm`. In the example the matrix is 18x15. The number of columns represents
@@ -352,7 +356,8 @@ example is to force that the parameters of the early unit are equal in
 both trial types, as well as the delay of the units and the probability of 
 an outlier. For this one uses
 
-```ptheta = tapas_sem_prosa_invgamma_ptheta();
+```
+ptheta = tapas_sem_prosa_invgamma_ptheta();
 ptheta.jm = [eye(9) zeros(9, 4);
     eye(2) zeros(2, 11);
     zeros(4, 9) eye(4);
@@ -363,5 +368,3 @@ In this case the actual number of parameters is 9 for prosaccade trials and
 4 for antisaccade trials (i.e. 13). To force that the parameters of the 
 early unit are equal across trials types we have written 
 `eye(2) zeros(2, 11)`.
-
-
