@@ -23,14 +23,14 @@ function [ptheta] = tapas_sem_prosa_gamma_ptheta()
 % Likelihood function and priors
 
 ptheta.name = 'prosa_gamma';
-ptheta.llh = @tapas_sem_prosa_llh;
+ptheta.llh = @tapas_sem_optimized_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.method = @c_prosa_two_states_gamma;
+ptheta.method = @c_prosa_multi_gamma;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 
 % Transformation of the parameters
-ptheta.ptrans = @tapas_sem_prosa_gamma_ptrans;
+ptheta.ptrans = [];
 
 ptheta.ndims = tapas_sem_prosa_ndims();
 ptheta.npars = 2; % It has two sets of parameters.

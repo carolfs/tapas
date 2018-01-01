@@ -25,9 +25,9 @@ ptheta.jm = eye(dim_theta);
 % Likelihood function and priors
 
 ptheta.name = 'prosa_mixedgamma';
-ptheta.llh = @tapas_sem_prosa_llh;
+ptheta.llh = @tapas_sem_optimized_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.method = @c_prosa_two_states_mixedgamma;
+ptheta.method = @c_prosa_multi_mixedgamma;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 ptheta.ndims = tapas_sem_prosa_ndims();                                                                                                                        

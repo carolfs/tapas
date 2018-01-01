@@ -115,11 +115,7 @@ function [y, u] = prepare_data()
 
 NDTIME = 100;
 
-f = mfilename('fullpath');
-[tdir, ~, ~] = fileparts(f);
-
-% Files are delimited with a tab and skip the header
-d = dlmread(fullfile(tdir, 'data', 'sbj02.csv'), '\t', 1, 0);
+d = tapas_sem_load_example_data();
 
 %Filter out unreasonably short reactions
 
@@ -156,7 +152,6 @@ y.a(t1) = 0;
 
 t0 = u.tt == 0;
 t1 = u.tt == 1;
-                      
 
 y.a = y.a(~y.i);
 y.t = y.t(~y.i);
@@ -166,4 +161,5 @@ u.b = u.b(~y.i);
 u.tt = u.tt(~y.i);
 
 y.i = y.i(~y.i);
+
 end

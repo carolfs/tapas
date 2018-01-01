@@ -25,9 +25,9 @@ ptheta.jm = eye(DIM_THETA);
 % Likelihood function and priors
 
 ptheta.name = 'prosa_invgamma';
-ptheta.llh = @tapas_sem_prosa_llh;
+ptheta.llh = @tapas_sem_optimized_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.method = @c_prosa_two_states_invgamma;
+ptheta.method = @c_prosa_multi_invgamma;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 ptheta.ndims = tapas_sem_prosa_ndims();

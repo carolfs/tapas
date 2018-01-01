@@ -26,10 +26,10 @@ ptheta.jm = eye(dim_theta);
 % Likelihood function and priors
 
 ptheta.name = 'dora_invgamma';
-ptheta.llh = @tapas_sem_seri_no_transform_llh;
+ptheta.llh = @tapas_sem_optimized_llh;
 ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.ptrans = []; 
-ptheta.method = @c_dora_two_states_invgamma_no_transform;
+ptheta.method = @c_dora_multi_invgamma;
 ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 ptheta.ndims = dim_theta;
