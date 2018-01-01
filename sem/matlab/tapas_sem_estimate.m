@@ -173,7 +173,6 @@ end
 
 ptrans = ptheta.ptrans; % Transformation function of the parameters
 ps.pE = mean(ptrans(ps_theta), 2);
-ps.pP = mean(ptrans(pp_theta), 2);
 
 % MAP
 [~, i] = max(elps(1, :));

@@ -25,6 +25,9 @@ action performed (pro or antisaccade) and the reaction time.
 You can use the file `sem/examples/tapas_sem_example_inversion.m`
 as a template to run your analysis.
 
+For more detailed information see
+
+
 ## As a python package
 
 This toolbox can be installed as python package. Although no inference
@@ -145,3 +148,202 @@ Requirements can be installed using
 ~~~~
 pip install -r requirements.txt
 ~~~~
+
+# Results
+
+In order to estimate the parameters of the model and the free energy, 
+the code uses the Metropolis-Hasting algorith in convination with a few 
+different other methods.
+
+The function `tapas_sem_estimate.m` returns an estimated model with is a
+structure with the fields
+* `pE`: Posterior expected value. That is the mean of the parameters. 
+* `map`: Sample with the highest posterior probability.
+* `ps_theta`: Samples of the parameters. The second dimension corresponds
+to the number of samples stored.
+* `llh`: The estimates accuracy at different temperatures used in 
+thermodynamic integration.
+* `F`: A scalar with is the estimated model evidence or negative free energy.
+* `y`: The same structure as the input.
+* `u`: The same structure as the input.
+* `ptheta`: The same structure as the input.
+* `htheta`: The same structure as the input.
+* `pars`: The same structure as the input.
+
+The meaning of the parameters depends on the particular parameteric 
+distribution. However, for each model the parameters have a similar meaning 
+and are explained below. Typically, in order to asses the convergence of
+the algorithm one can use Gelman-Rubin's R hat statistics, which is required
+to be bellow 1.1. To do this one can run
+
+```>> results = tapas_sem_example_inversion(1, 'invgamma');
+>> psrf(results.ps_theta')
+
+ans =
+
+  Columns 1 through 7
+
+    1.0331    1.1164    1.0534    1.1265    1.1857    1.2260    1.0643
+
+  Columns 8 through 14
+
+    1.0695    2.1619    1.1677    0.9995    1.2352    1.1584    1.2630
+
+  Columns 15 through 18
+
+    1.1480    1.0643    1.0695    2.1619```
+
+In this case most of the parameters have not converge. Note that parameters
+7, 8, 9 and 16, 17, 18 have the same value as they have been set up to 
+be equal across trial types (see below).
+
+To obtain the mean value of the parameters one can run
+```>> mean(results.ps_theta')
+
+ans =
+
+  Columns 1 through 7
+
+   -1.4134   -2.7990   -0.8407   -3.2681   -2.4326   -3.2056    0.2264
+
+  Columns 8 through 14
+
+   -1.9420   -5.8132   -0.8028   -1.9048   -1.6275   -3.8723   -2.2246
+
+  Columns 15 through 18
+
+   -5.6216    0.2264   -1.9420   -5.8132```
+
+Note that the parameters take a negative value because they are sampled
+before transforming them to their native implementation. 
+
+## Parameters prosa model
+
+The model is defined by 9 parameters: two for the prosaccade unit, two for
+the antisaccade unit and two for the stop unit. Moreover, there is a delay
+of all the units, a delay for the antisaccade unit and the probability of
+making a early outlier, i.e., that a saccade happens before the main delay.
+To model different trial types, the model has a set of parameters for each
+trial type. Thus, 18 parametes are required. This are organized in a vector
+where the parametes has the following meaning
+
+1. Prosaccade unit in prosaccade trials.
+2. Prosaccade unit in prosaccade trials.
+5. Antisaccade unit in prosaccade trials.
+6. Antisaccade unit in prosaccade trials.
+3. Stop unit in prosaccade trials.
+4. Stop unit in prosaccade trials.
+7. General delay in prosaccade trials.
+8. Antisaccade unit delay in prosaccade trials.
+9. Probability of an early outlier in prosaccade trials.
+
+Parameters 10 to 18 are equivalent but are only relevant in
+antisaccade trials.
+
+## Parameters SERIA model
+
+The model is defined by 11 parameters: two for the early unit, two for
+the late unit, and two for the stop unit. Also there is the probability of 
+an early prosaccade and the probability of a late prosaccade. Finally, there
+is a delay for all the units, a delay for the antisaccade unit and the 
+probability of
+making a early outlier, i.e., that a saccade happens before the main delay.
+To model different trial types, the model has a set of parameters for each
+trial type. Thus, 22 parametes are required. This are organized in a vector
+where the parametes has the following meaning
+
+1. Early unit in prosaccade trials.
+2. Early unit in prosaccade trials.
+5. Late unit in prosaccade trials.
+6. Late unit in prosaccade trials.
+3. Stop unit in prosaccade trials.
+4. Stop unit in prosaccade trials.
+7. Probability of an early prosaccade in prosaccade trials.
+8. Probability of a late prosaccade in prosaccade trials.
+7. General delay in prosaccade trials.
+8. Late unit delay in prosaccade trials.
+9. Probability of an early outlier in prosaccade trials.
+
+Parameters 12 to 22 are equivalent but are only relevant in
+antisaccade trials.
+
+## Parameters of the SERIA with late race (dora) model
+
+In the code the SERIA model with late race is called dora (for double race)
+model. The model is defined by 11 parameters: two for the early prosaccade 
+unit, two for the stop unit, two for the late antisaccade unit and 
+two for the late Also there is the probability of 
+an early prosaccade and the probability of a late prosaccade. Finally, there
+is a delay for all the units, a delay for the antisaccade unit and the 
+probability of
+making a early outlier, i.e., that a saccade happens before the main delay.
+To model different trial types, the model has a set of parameters for each
+trial type. Thus, 22 parametes are required. This are organized in a vector
+where the parametes has the following meaning
+
+1. Early prosaccade unit in prosaccade trials.
+2. Early prosaccade unit in prosaccade trials.
+3. Antisaccade unit in prosaccade trials.
+4. Antisaccade unit in prosaccade trials.
+5. Stop unit in prosaccade trials.
+6. Stop unit in prosaccade trials.
+7. Late prosaccade unit in prosaccade trials.
+8. Late prosaccade unit in prosaccade trials.
+7. General delay in prosaccade trials.
+8. Late unit delay in prosaccade trials.
+9. Probability of an early outlier in prosaccade trials.
+
+Parameters 12 to 22 are equivalent but are only relevant in
+antisaccade trials.
+
+## Nested models
+
+In order to generate nested model a projection matrix is used. This is 
+defined as the attribute `jm` of a model. For example
+
+```ptheta = tapas_sem_prosa_invgamma_ptheta();
+ptheta.jm = [eye(15); zeros(3, 12) eye(3)];```
+
+In this case the nested model is defined by setting up the constrain matrix
+`jm`. In the example the matrix is 18x15. The number of columns represents
+the number of actual parameters. If multiplied with a vector with 
+dimensionality 15x1, this would produce a vector in which the parameters
+7,8,9 and 16, 17, 18 are equal. The rationale of this is that this three
+parameters can be forced to be equal across trial types. A more complicated
+example is to force that the parameters of the early unit are equal in 
+both trial types, as well as the delay of the units and the probability of 
+an outlier. For this one uses
+
+```ptheta = tapas_sem_prosa_invgamma_ptheta();
+ptheta.jm = [eye(9) zeros(9, 4);
+    eye(2) zeros(2, 11);
+    zeros(4, 9) eye(4);
+    zeros(3, 6) eye(3) zeros(3, 4)];
+```
+
+In this case the actual number of parameters is 9 for prosaccade trials and 
+4 for antisaccade trials (i.e. 13). To force that the parameters of the 
+early unit are equal across trials types we have written 
+`eye(2) zeros(2, 11)`.
+
+To transform the parameters to their native space the respective function 
+is `tapas_sem_[model]_[parametric dist]_ptrans.m`. For example,
+
+```>> tapas_sem_prosa_invgamma_ptrans(results.map)'
+
+ans =
+
+  Columns 1 through 7
+
+    2.6363    3.6399    6.1439    9.6374    2.2676    2.7386    1.2675
+
+  Columns 8 through 14
+
+    0.2064    0.0527    3.1975    2.7737    3.7221    8.5906    7.8973
+
+  Columns 15 through 18
+
+   38.5444    1.2675    0.2064    0.0527```
+
+One can immediately observe that the probability of an early outlier is
+0.052.

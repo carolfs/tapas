@@ -1,4 +1,4 @@
-function tapas_sem_example_inversion(model, parametric)
+function [results] = tapas_sem_example_inversion(model, parametric)
 %% Test 
 %
 % fp -- Pointer to a file for the test output, defaults to 1
@@ -25,13 +25,16 @@ end
 pars = struct();
 
 pars.T = linspace(0.1, 1, 4).^5; % Defines the number of temperatures (16)
-pars.nburnin = 3000; % Number of samples in the burn in phase
-pars.niter = 3000; % Number of samples
+pars.nburnin = 2000; % Number of samples in the burn in phase
+pars.niter = 2000; % Number of samples
 pars.kup = 100; % Number of samples drawn before diagnosis
-pars.mc3it = 16; % Number of swaps between the cahins
+pars.mc3it = 4; % Number of swaps between the cahins
 pars.verbose = 1; % Level of verbosity
+pars.samples = 1; % Store the samples
 
 if model == 1
+    fprintf(1, 'Prosa inversion\n')
+
     switch parametric
         case 'gamma'
             ptheta = tapas_sem_prosa_gamma_ptheta(); 

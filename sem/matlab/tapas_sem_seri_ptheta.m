@@ -20,9 +20,6 @@ dim_theta = tapas_sem_seri_ndims();
 
 [ptheta] = tapas_sem_seri_gaussian_priors();
 
-% Projection matrix
-ptheta.jm = eye(dim_theta);
-
 % Likelihood function and priors
 
 ptheta.name = '';
@@ -34,5 +31,6 @@ ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
 ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
 ptheta.ndims = dim_theta;
 ptheta.npars = 2;
+ptheta.jm = kron(eye(ptheta.npars), eye(dim_theta));
 
 end
