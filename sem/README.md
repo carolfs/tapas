@@ -152,11 +152,11 @@ pip install -r requirements.txt
 # Results
 
 In order to estimate the parameters of the model and the free energy, 
-the code uses the Metropolis-Hasting algorith in convination with a few 
+the code uses the Metropolis-Hasting algorith in combination with a few 
 different other methods.
 
-The function `tapas_sem_estimate.m` returns an estimated model with is a
-structure with the fields
+The function `tapas_sem_estimate.m` returns an estimated model. This
+is structure with the following fields
 * `pE`: Posterior expected value. That is the mean of the parameters. 
 * `map`: Sample with the highest posterior probability.
 * `ps_theta`: Samples of the parameters. The second dimension corresponds
@@ -174,10 +174,18 @@ The meaning of the parameters depends on the particular parameteric
 distribution. However, for each model the parameters have a similar meaning 
 and are explained below. Typically, in order to asses the convergence of
 the algorithm one can use Gelman-Rubin's R hat statistics, which is required
-to be bellow 1.1. To do this one can run
+to be bellow 1.1. For example, using the built-in example from the MATLAB
+prompt:
 
 ```>> results = tapas_sem_example_inversion(1, 'invgamma');
->> psrf(results.ps_theta')
+```
+
+This estimates the model using the PROSA model (first value) and assumes
+that the hit time of the units is destributed according to the inverse Gamma
+distribution (other options can be found in the code).
+
+To asses the convergence of the algorithm, from the MATLAB prompt
+```>> psrf(results.ps_theta')
 
 ans =
 
@@ -191,7 +199,8 @@ ans =
 
   Columns 15 through 18
 
-    1.1480    1.0643    1.0695    2.1619```
+    1.1480    1.0643    1.0695    2.1619
+```
 
 In this case most of the parameters have not converge. Note that parameters
 7, 8, 9 and 16, 17, 18 have the same value as they have been set up to 
@@ -212,10 +221,37 @@ ans =
 
   Columns 15 through 18
 
-   -5.6216    0.2264   -1.9420   -5.8132```
+   -5.6216    0.2264   -1.9420   -5.8132
+```
 
 Note that the parameters take a negative value because they are sampled
-before transforming them to their native implementation. 
+before transforming them to their native native space (in the case of the
+invgamma parametrization this is standard shape, scale parametrization in
+which both values are positive.  
+
+To transform the parameters to their native space (the positive interval)
+the respective function 
+is `tapas_sem_[model]_[parametric dist]_ptrans.m`. For example,
+
+```>> tapas_sem_prosa_invgamma_ptrans(results.map)'
+
+ans =
+
+  Columns 1 through 7
+
+    2.6363    3.6399    6.1439    9.6374    2.2676    2.7386    1.2675
+
+  Columns 8 through 14
+
+    0.2064    0.0527    3.1975    2.7737    3.7221    8.5906    7.8973
+
+  Columns 15 through 18
+
+   38.5444    1.2675    0.2064    0.0527
+```
+
+One can immediately observe that the probability of an early outlier is
+0.052.
 
 ## Parameters prosa model
 
@@ -326,24 +362,4 @@ In this case the actual number of parameters is 9 for prosaccade trials and
 early unit are equal across trials types we have written 
 `eye(2) zeros(2, 11)`.
 
-To transform the parameters to their native space the respective function 
-is `tapas_sem_[model]_[parametric dist]_ptrans.m`. For example,
 
-```>> tapas_sem_prosa_invgamma_ptrans(results.map)'
-
-ans =
-
-  Columns 1 through 7
-
-    2.6363    3.6399    6.1439    9.6374    2.2676    2.7386    1.2675
-
-  Columns 8 through 14
-
-    0.2064    0.0527    3.1975    2.7737    3.7221    8.5906    7.8973
-
-  Columns 15 through 18
-
-   38.5444    1.2675    0.2064    0.0527```
-
-One can immediately observe that the probability of an early outlier is
-0.052.
