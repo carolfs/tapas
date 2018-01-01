@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_prosa_later_ptheta()
+function [ptheta] = tapas_sem_prosa_wald_ptheta()
 %% Returns the standard priors of the model.
 %
 % Input 
@@ -17,7 +17,7 @@ function [ptheta] = tapas_sem_prosa_later_ptheta()
 %
 
 ptheta = tapas_sem_prosa_ptheta;
-ptheta.name = 'prosa_later';
-ptheta.method = @c_prosa_multi_later;
+ptheta.name = 'prosa_wald';
+ptheta.method = @c_prosa_multi_wald;
 
 end

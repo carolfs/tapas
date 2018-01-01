@@ -1,4 +1,4 @@
-function tapas_sem_example_inversion(model, fp)
+function tapas_sem_example_inversion(model, parametric)
 %% Test 
 %
 % fp -- Pointer to a file for the test output, defaults to 1
@@ -16,97 +16,104 @@ end
 
 n = n + 1;
 if nargin < n
-    fp = 1;
+    parametric = 'invgamma';
 end
-
-fname = mfilename();
-fname = regexprep(fname, 'test_', '');
-
-fprintf(fp, '================\n Test %s\n================\n', fname);
 
 [y, u] = prepare_data();
 
-if model == 1
-
-ptheta = tapas_sem_prosa_invgamma_ptheta(); % Choose at convinience.
-htheta = tapas_sem_prosa_htheta(); % Choose at convinience.
-ptheta.ptrans = @(vtheta) vtheta;
-
-% Insert a parametrization matrix
-
-% Assume all the delays are equal but otherwise have free parameters
-
-% 12 unit parameters and 2 delays and rate of outliers.
-ptheta.jm = [eye(15) 
-    zeros(3, 6) eye(3) zeros(3, 6)]; % Share the parameters across trial types
-
+% Parameter of the mcmc algorithm
 pars = struct();
 
-pars.T = linspace(0.1, 1, 16).^5;
-pars.nburnin = 3000;
-pars.niter = 3000;
-pars.kup = 1000;
-pars.mc3it = 16;
-pars.verbose = 1;
+pars.T = linspace(0.1, 1, 4).^5; % Defines the number of temperatures (16)
+pars.nburnin = 3000; % Number of samples in the burn in phase
+pars.niter = 3000; % Number of samples
+pars.kup = 100; % Number of samples drawn before diagnosis
+pars.mc3it = 16; % Number of swaps between the cahins
+pars.verbose = 1; % Level of verbosity
 
-tapas_sem_estimate(y, u, ptheta, htheta, pars);
+if model == 1
+    switch parametric
+        case 'gamma'
+            ptheta = tapas_sem_prosa_gamma_ptheta(); 
+        case 'invgamma'
+            ptheta = tapas_sem_prosa_invgamma_ptheta();
+        case 'wald'
+            ptheta = tapas_sem_prosa_wald_ptheta();
+        case 'mixedgamma'
+            ptheta = tapas_sem_prosa_mixed_ptheta();
+        case 'later'
+            ptheta = tapas_sem_prosa_later_ptheta();
+        case 'lognorm'
+            ptheta = tapas_sem_prosa_lognorm_ptheta();
+        otherwise
+            error('tapas:sem:example', 'unknown parametric');
+    end
+
+    % In most situations this does not need to be changed.
+    htheta = tapas_sem_prosa_htheta();
+
+    % This is the projection matrix that fixes the parameters across trial
+    % types.
+    ptheta.jm = [eye(15) 
+        zeros(3, 6) eye(3) zeros(3, 6)];
 
 end
 
 if model == 2
-
-fprintf(1, 'Seri inversion\n')
-
-ptheta = tapas_sem_seri_wald_ptheta(); % Choose at convinience.
-htheta = tapas_sem_seri_htheta(); % Choose at convinience.
-
-% Insert a parametrization matrix
-
-% The same parameters are used in pro and antisaccade trials
-ptheta.jm = [...
-    eye(19)
-    zeros(3, 8) eye(3) zeros(3, 8)];
-
-pars = struct();
-
-pars.T = linspace(0.1, 1, 16).^5;
-pars.nburnin = 2000;
-pars.niter = 2000;
-pars.kup = 1000;
-pars.mc3it = 16;
-pars.verbose = 1;
-
-tapas_sem_estimate(y, u, ptheta, htheta, pars);
-
+    fprintf(1, 'Seri inversion\n')
+    switch parametric
+        case 'gamma'
+            ptheta = tapas_sem_seri_gamma_ptheta(); 
+        case 'invgamma'
+            ptheta = tapas_sem_seri_invgamma_ptheta();
+        case 'wald'
+            ptheta = tapas_sem_seri_wald_ptheta();
+        case 'mixedgamma'
+            ptheta = tapas_sem_seri_mixed_ptheta();
+        case 'later'
+            ptheta = tapas_sem_seri_later_ptheta();
+        case 'lognorm'
+            ptheta = tapas_sem_seri_lognorm_ptheta();
+        otherwise
+            error('tapas:sem:example', 'unknown parametric');
+    end
+    htheta = tapas_sem_seri_htheta();
+    % The same parameters are used in pro and antisaccade trials
+    ptheta.jm = [...
+        eye(19)
+        zeros(3, 8) eye(3) zeros(3, 8)];
 end
 
 if model == 3
 
-fprintf(1, 'Dora inversion\n');
+    fprintf(1, 'Dora inversion\n');
 
-ptheta = tapas_sem_dora_invgamma_ptheta(); 
-htheta = tapas_sem_dora_htheta(); % Choose at convinience.
+    switch parametric
+        case 'gamma'
+            ptheta = tapas_sem_dora_gamma_ptheta(); 
+        case 'invgamma'
+            ptheta = tapas_sem_dora_invgamma_ptheta();
+        case 'wald'
+            ptheta = tapas_sem_dora_wald_ptheta();
+        case 'mixedgamma'
+            ptheta = tapas_sem_dora_mixed_ptheta();
+        case 'later'
+            ptheta = tapas_sem_dora_later_ptheta();
+        case 'lognorm'
+            ptheta = tapas_sem_dora_lognorm_ptheta();
+        otherwise
+            error('tapas:sem:example', 'unknown parametric');
+    end
 
-% Insert a parametrization matrix
-
-% The same parameters are used in pro and antisaccade trials
-ptheta.jm = [...
-    eye(19)
-    zeros(3, 8) eye(3) zeros(3, 8)];
-
-pars = struct();
-
-pars.T = linspace(0.1, 1, 16).^5;
-pars.nburnin = 3000;
-pars.niter = 3000;
-pars.kup = 1000;
-pars.mc3it = 16;
-pars.verbose = 1;
-
-tapas_sem_estimate(y, u, ptheta, htheta, pars);
+    htheta = tapas_sem_dora_htheta();
+    % The same parameters are used in pro and antisaccade trials
+    ptheta.jm = [...
+        eye(19)
+        zeros(3, 8) eye(3) zeros(3, 8)];
 
 end
 
+results = tapas_sem_estimate(y, u, ptheta, htheta, pars);
 
 end
 
@@ -115,7 +122,11 @@ function [y, u] = prepare_data()
 
 NDTIME = 100;
 
-d = tapas_sem_load_example_data();
+f = mfilename('fullpath');
+[tdir, ~, ~] = fileparts(f);
+
+% Files are delimited with a tab and skip the header
+d = dlmread(fullfile(tdir, 'data', 'sbj02.csv'), '\t', 1, 0);
 
 %Filter out unreasonably short reactions
 
@@ -152,6 +163,7 @@ y.a(t1) = 0;
 
 t0 = u.tt == 0;
 t1 = u.tt == 1;
+                      
 
 y.a = y.a(~y.i);
 y.t = y.t(~y.i);

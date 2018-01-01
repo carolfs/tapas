@@ -16,23 +16,8 @@ function [ptheta] = tapas_sem_prosa_gamma_ptheta()
 % copyright (C) 2015
 %
 
-[ptheta] = tapas_sem_prosa_gaussian_priors();
-
-% Projection matrix
-
-% Likelihood function and priors
-
+ptheta = tapas_sem_prosa_ptheta;
 ptheta.name = 'prosa_gamma';
-ptheta.llh = @tapas_sem_optimized_llh;
-ptheta.lpp = @tapas_sem_prosa_lpp;
 ptheta.method = @c_prosa_multi_gamma;
-ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
-ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
-
-% Transformation of the parameters
-ptheta.ptrans = [];
-
-ptheta.ndims = tapas_sem_prosa_ndims();
-ptheta.npars = 2; % It has two sets of parameters.
 
 end

@@ -16,23 +16,9 @@ function [ptheta] = tapas_sem_dora_invgamma_ptheta()
 % copyright (C) 2015
 %
 
-dim_theta = tapas_sem_dora_ndims();
-
-[ptheta] = tapas_sem_dora_gaussian_priors();
-
-% Projection matrix
-ptheta.jm = eye(dim_theta);
-
-% Likelihood function and priors
+ptheta = tapas_sem_dora_ptheta;
 
 ptheta.name = 'dora_invgamma';
-ptheta.llh = @tapas_sem_optimized_llh;
-ptheta.lpp = @tapas_sem_prosa_lpp;
-ptheta.ptrans = []; 
 ptheta.method = @c_dora_multi_invgamma;
-ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
-ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
-ptheta.ndims = dim_theta;
-ptheta.npars = 2;
 
 end

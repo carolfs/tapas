@@ -16,24 +16,8 @@ function [ptheta] = tapas_sem_seri_later_ptheta()
 % copyright (C) 2015
 %
 
-dim_theta = tapas_sem_seri_ndims();
-
-ptheta = tapas_sem_seri_later_gaussian_priors();
-
-% Projection matrix
-ptheta.jm = eye(dim_theta);
-
-% Likelihood function and priors
-
+ptheta = tapas_sem_seri_ptheta();
 ptheta.name = 'seri_later';
-ptheta.llh = @tapas_sem_seri_no_transform_llh;
-ptheta.lpp = @tapas_sem_seri_lpp;
-ptheta.ptrans = @tapas_sem_seri_later_ptrans; 
-ptheta.method = @c_seri_two_states_later_no_transform;
-ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
-ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
-ptheta.ndims = dim_theta;
-ptheta.npars = 2;
+ptheta.method = @c_seri_multi_later;
 
 end
-

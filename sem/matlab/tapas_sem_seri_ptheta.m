@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_prosa_later_ptheta()
+function [ptheta] = tapas_sem_seri_ptheta()
 %% Returns the standard priors of the model.
 %
 % Input 
@@ -16,8 +16,23 @@ function [ptheta] = tapas_sem_prosa_later_ptheta()
 % copyright (C) 2015
 %
 
-ptheta = tapas_sem_prosa_ptheta;
-ptheta.name = 'prosa_later';
-ptheta.method = @c_prosa_multi_later;
+dim_theta = tapas_sem_seri_ndims();
+
+[ptheta] = tapas_sem_seri_gaussian_priors();
+
+% Projection matrix
+ptheta.jm = eye(dim_theta);
+
+% Likelihood function and priors
+
+ptheta.name = '';
+ptheta.llh = @tapas_sem_optimized_llh;
+ptheta.lpp = @tapas_sem_seri_lpp;
+ptheta.ptrans = @(x) x;
+ptheta.method = [];
+ptheta.prepare = @tapas_sem_prepare_gaussian_ptheta;
+ptheta.sample_priors = @tapas_sem_sample_gaussian_uniform_priors;
+ptheta.ndims = dim_theta;
+ptheta.npars = 2;
 
 end

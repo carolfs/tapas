@@ -1,4 +1,4 @@
-function [ptheta] = tapas_sem_prosa_later_ptheta()
+function [ptheta] = tapas_sem_dora_gamma_ptheta()
 %% Returns the standard priors of the model.
 %
 % Input 
@@ -16,8 +16,9 @@ function [ptheta] = tapas_sem_prosa_later_ptheta()
 % copyright (C) 2015
 %
 
-ptheta = tapas_sem_prosa_ptheta;
-ptheta.name = 'prosa_later';
-ptheta.method = @c_prosa_multi_later;
+ptheta = tapas_sem_dora_ptheta;
+
+ptheta.name = 'dora_gamma';
+ptheta.method = @c_dora_multi_gamma;
 
 end
